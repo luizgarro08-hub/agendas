@@ -1,0 +1,16 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Segredos locais
+.env
+.env.*
+*.local
+
+# Node (caso seja usado no futuro)
+node_modules/
+npm-debug.log*

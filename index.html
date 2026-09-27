@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda & Finanças</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <div class="brand auth-brand"><div class="brand-mark">P</div><div><strong>Agenda & Finanças</strong><span>Personal Manager</span></div></div>
+      <h1 id="authTitle">Entrar</h1>
+      <p id="authSubtitle">Acesse sua agenda, tarefas e finanças.</p>
+      <form id="authForm">
+        <div class="field"><label>E-MAIL</label><input id="authEmail" type="email" autocomplete="email" required placeholder="voce@email.com"></div>
+        <div class="field"><label>SENHA</label><input id="authPassword" type="password" autocomplete="current-password" required placeholder="Mínimo de 6 caracteres"></div>
+        <button class="primary-btn auth-submit" id="authSubmit">Entrar</button>
+      </form>
+      <button class="auth-switch" id="authSwitch">Ainda não tenho conta</button>
+      <div class="auth-status" id="authStatus"></div>
+    </div>
+  </div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <div>
+          <strong>Agenda & Finanças</strong>
+          <span>Personal Manager</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-page="agenda"><span>◫</span> Agenda</button>
+        <button class="nav-item" data-page="financas"><span>R$</span> Finanças</button>
+        <button class="nav-item" data-page="tarefas"><span>✓</span> Tarefas</button>
+        <button class="nav-item" data-page="alarmes"><span>◷</span> Alarmes</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="storage-card">
+          <span>Armazenamento</span>
+          <strong>Supabase conectado</strong>
+          <small>Seus dados ficam vinculados à sua conta.</small>
+        </div>
+        <button class="nav-item" data-page="config"><span>⚙</span> Configurações</button>
+        <button class="nav-item logout-nav" id="logoutBtn"><span>↪</span> Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="mobileMenu">☰</button>
+        <div>
+          <p class="eyebrow" id="pageEyebrow">VISÃO GERAL</p>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="top-actions">
+          <div class="live-clock" id="clock">--:--:--</div>
+          <button class="icon-btn" id="quickAdd" title="Adicionar">＋</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- DASHBOARD -->
+        <section class="page active" id="page-dashboard">
+          <div class="welcome">
+            <div>
+              <span class="badge">PAINEL PESSOAL</span>
+              <h2>Olá! 👋</h2>
+              <p>Acompanhe sua rotina e seu dinheiro em um só lugar.</p>
+            </div>
+            <button class="primary-btn" id="dashboardAdd">＋ Novo registro</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card balance">
+              <div class="stat-icon">R$</div>
+              <div><span>Saldo atual</span><strong id="dashBalance">R$ 0,00</strong></div>
+              <small id="balanceTrend">Sem movimentações</small>
+            </article>
+            <article class="stat-card income">
+              <div class="stat-icon">↗</div>
+              <div><span>Entradas</span><strong id="dashIncome">R$ 0,00</strong></div>
+              <small>Registros financeiros</small>
+            </article>
+            <article class="stat-card expense">
+              <div class="stat-icon">↘</div>
+              <div><span>Gastos</span><strong id="dashExpense">R$ 0,00</strong></div>
+              <small>Registros financeiros</small>
+            </article>
+            <article class="stat-card tasks">
+              <div class="stat-icon">✓</div>
+              <div><span>Tarefas pendentes</span><strong id="dashTasks">0</strong></div>
+              <small id="dashEvents">0 compromissos</small>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel chart-panel">
+              <div class="panel-head">
+                <div><h3>Movimentação financeira</h3><span>Entradas x gastos</span></div>
+                <select id="chartPeriod" class="select">
+                  <option value="6">6 meses</option>
+                  <option value="12">12 meses</option>
+                </select>
+              </div>
+              <canvas id="financeChart"></canvas>
+              <div class="empty-chart" id="chartEmpty">Adicione movimentações para visualizar o gráfico.</div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div><h3>Próximos compromissos</h3><span>Agenda</span></div>
+                <button class="text-btn" data-page-link="agenda">Ver todos</button>
+              </div>
+              <div id="upcomingEvents" class="list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div><h3>Gastos por categoria</h3><span>Distribuição</span></div>
+              </div>
+              <canvas id="categoryChart"></canvas>
+              <div class="empty-chart" id="categoryEmpty">Ainda não há gastos.</div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div><h3>Tarefas de hoje</h3><span>Produtividade</span></div>
+                <button class="text-btn" data-page-link="tarefas">Abrir</button>
+              </div>
+              <div id="todayTasks" class="list"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- AGENDA -->
+        <section class="page" id="page-agenda">
+          <div class="section-head">
+            <div><h2>Agenda</h2><p>Organize compromissos e eventos.</p></div>
+            <button class="primary-btn" id="addEventBtn">＋ Novo evento</button>
+          </div>
+          <div class="calendar-layout">
+            <article class="panel calendar-card">
+              <div class="calendar-head">
+                <button class="icon-btn" id="prevMonth">‹</button>
+                <h3 id="calendarTitle"></h3>
+                <button class="icon-btn" id="nextMonth">›</button>
+              </div>
+              <div class="weekdays">
+                <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+              </div>
+              <div class="calendar" id="calendar"></div>
+            </article>
+            <article class="panel day-events">
+              <div class="panel-head">
+                <div><h3 id="selectedDateTitle">Eventos</h3><span>Selecione um dia</span></div>
+              </div>
+              <div id="dayEvents" class="list"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- FINANÇAS -->
+        <section class="page" id="page-financas">
+          <div class="section-head">
+            <div><h2>Finanças</h2><p>Controle entradas, gastos e saldo.</p></div>
+            <button class="primary-btn" id="addTransactionBtn">＋ Nova movimentação</button>
+          </div>
+          <div class="finance-summary">
+            <div class="mini-stat"><span>Saldo</span><strong id="financeBalance">R$ 0,00</strong></div>
+            <div class="mini-stat positive"><span>Entradas</span><strong id="financeIncome">R$ 0,00</strong></div>
+            <div class="mini-stat negative"><span>Gastos</span><strong id="financeExpense">R$ 0,00</strong></div>
+          </div>
+          <article class="panel">
+            <div class="panel-head">
+              <div><h3>Movimentações</h3><span id="transactionCount">0 registros</span></div>
+              <input class="search" id="transactionSearch" placeholder="Pesquisar...">
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Descrição</th><th>Categoria</th><th>Data</th><th>Tipo</th><th>Valor</th><th></th></tr></thead>
+                <tbody id="transactionsTable"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <!-- TAREFAS -->
+        <section class="page" id="page-tarefas">
+          <div class="section-head">
+            <div><h2>Tarefas</h2><p>Planeje o que precisa ser feito.</p></div>
+            <button class="primary-btn" id="addTaskBtn">＋ Nova tarefa</button>
+          </div>
+          <div class="task-toolbar">
+            <button class="filter-btn active" data-task-filter="all">Todas</button>
+            <button class="filter-btn" data-task-filter="pending">Pendentes</button>
+            <button class="filter-btn" data-task-filter="done">Concluídas</button>
+          </div>
+          <div id="tasksList" class="tasks-grid"></div>
+        </section>
+
+        <!-- ALARMES -->
+        <section class="page" id="page-alarmes">
+          <div class="section-head">
+            <div><h2>Alarmes & lembretes</h2><p>Receba avisos enquanto esta página estiver aberta.</p></div>
+            <button class="primary-btn" id="addAlarmBtn">＋ Novo alarme</button>
+          </div>
+          <div class="notice"><strong>ℹ️ Como funciona:</strong> os alarmes são monitorados pelo navegador. Para um alarme tocar com o site fechado, seria necessário transformar o projeto em PWA/aplicativo.</div>
+          <div id="alarmsList" class="alarms-grid"></div>
+        </section>
+
+        <!-- CONFIG -->
+        <section class="page" id="page-config">
+          <div class="section-head">
+            <div><h2>Configurações</h2><p>Preferências e gerenciamento dos dados.</p></div>
+          </div>
+          <article class="panel settings-panel">
+            <div class="setting">
+              <div><strong>Nome exibido</strong><span>Usado nas mensagens do dashboard.</span></div>
+              <input class="input" id="userName" placeholder="Seu nome">
+            </div>
+            <div class="setting">
+              <div><strong>Notificações</strong><span>Permitir alertas visuais dos alarmes.</span></div>
+              <button class="secondary-btn" id="requestNotifications">Permitir notificações</button>
+            </div>
+            <div class="setting danger-zone">
+              <div><strong>Apagar todos os dados</strong><span>Remove agenda, tarefas, alarmes e finanças deste navegador.</span></div>
+              <button class="danger-btn" id="clearData">Apagar dados</button>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modal"></div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
